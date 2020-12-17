@@ -32,10 +32,6 @@ module.exports = {
     }),
     new ModuleFederationPlugin({
       name: 'container',
-      remotes: {
-        cats: 'cats@http://localhost:3001/remoteEntry.js',
-        dogs: 'dogs@http://localhost:3002/remoteEntry.js',
-      },
       shared: ['react', 'react-dom'],
     }),
   ],
