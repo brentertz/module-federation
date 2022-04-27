@@ -1,10 +1,11 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const { ModuleFederationPlugin } = require('webpack').container;
+const { dependencies } = require('./package.json');
 
 module.exports = {
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    static: path.join(__dirname, 'dist'),
     port: 3000,
   },
   entry: './src/index.tsx',
@@ -33,10 +34,20 @@ module.exports = {
     new ModuleFederationPlugin({
       name: 'container',
       remotes: {
-        cats: 'cats@http://localhost:3001/remoteEntry.js',
-        dogs: 'dogs@http://localhost:3002/remoteEntry.js',
+        cats: 'cats@//localhost:3001/remoteEntry.js',
+        dogs: 'dogs@//localhost:3002/remoteEntry.js',
       },
-      shared: ['react', 'react-dom'],
+      shared: {
+        ...dependencies,
+        react: {
+          singleton: true,
+          requiredVersion: dependencies.react,
+        },
+        'react-dom': {
+          singleton: true,
+          requiredVersion: dependencies['react-dom'],
+        },
+      },
     }),
   ],
 };
